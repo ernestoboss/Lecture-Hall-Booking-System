@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Lecture Hall Booking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+
+  <!-- Admin Login Modal -->
+  <div id="admin-login-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-50">
+    <div class="bg-gray-900 rounded-3xl p-10 w-full max-w-md mx-4 border border-gray-800">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold mb-2">🔐 Admin Access</h1>
+        <p class="text-gray-400">Enter your admin credentials to continue</p>
+      </div>
+
+      <div class="space-y-6">
+        <div>
+          <label class="block text-gray-400 text-sm mb-3">Admin Username</label>
+          <input type="text" id="admin-username" 
+                 class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 text-lg"
+                 placeholder="Enter username"
+                 autocomplete="off">
+        </div>
+
+        <div>
+          <label class="block text-gray-400 text-sm mb-3">Admin Password</label>
+          <div class="relative">
+            <input type="password" id="admin-password" 
+                   class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 pr-12 focus:outline-none focus:border-blue-500 text-lg"
+                   placeholder="Enter password"
+                   autocomplete="off">
+            <button type="button" onclick="toggleAdminPasswordVisibility()" 
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200">
+              <svg id="admin-eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <p id="admin-login-error" class="text-red-400 text-sm hidden"></p>
+
+        <div class="flex gap-4">
+          <a href="index.html" 
+             class="flex-1 py-4 bg-gray-700 hover:bg-gray-600 rounded-2xl font-medium text-lg transition text-center">
+            Back to Booking
+          </a>
+          <button onclick="adminLogin()" 
+                  class="flex-1 py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-medium text-lg transition">
+            Login
+          </button>
+        </div>
+      </div>
+
+      <p class="text-gray-500 text-xs mt-8 text-center">For demo: username=<strong>admin</strong>, password=<strong>admin123</strong></p>
+    </div>
+  </div>
+
+  <!-- Main Admin Content (Hidden until authenticated) -->
+  <div id="admin-content" class="hidden">
+  <div class="max-w-6xl mx-auto p-6">
+    <div class="flex justify-between items-center mb-10">
+      <div>
+        <h1 class="text-3xl font-bold">Admin Panel - Lecture Hall Booking</h1>
+        <p class="text-gray-400 text-sm mt-2">Logged in as: <span id="logged-username" class="font-mono text-blue-400">admin</span></p>
+      </div>
+      <div class="flex gap-4 items-center">
+        <a href="index.html" 
+           class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-2xl font-medium">
+          ← Back to Booking System
+        </a>
+        <button id="theme-toggle-btn" onclick="toggleTheme()"
+                class="theme-button bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-2xl font-medium inline-flex items-center gap-2">
+          <span id="theme-toggle-icon" class="text-lg">🌙</span>
+          <span id="theme-toggle-text">Light Mode</span>
+        </button>
+        <button onclick="adminLogout()"
+                class="bg-red-600 hover:bg-red-500 px-6 py-3 rounded-2xl font-medium">
+          🚪 Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Weekly Password Section -->
+    <div class="bg-gray-900 rounded-3xl p-8 mb-10">
+      <h2 class="text-2xl font-semibold mb-6">Weekly Password Management</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <label class="block text-gray-400 mb-3">Current Weekly Password</label>
+          <div class="flex gap-3">
+            <input type="text" id="current-password" readonly
+                   class="flex-1 bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 text-2xl font-mono tracking-widest">
+            <button onclick="generateNewPassword()" 
+                    class="bg-yellow-600 hover:bg-yellow-500 px-8 rounded-2xl font-medium">
+              Generate New Password
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-3">Set Custom Password</label>
+          <div class="flex gap-3">
+            <input type="text" id="custom-password" placeholder="Enter new password"
+                   class="flex-1 bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4">
+            <button onclick="setCustomPassword()" 
+                    class="bg-green-600 hover:bg-green-500 px-8 rounded-2xl font-medium">
+              Save Password
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <button onclick="clearAllBookings()" 
+              class="bg-red-600 hover:bg-red-500 py-6 rounded-3xl font-medium text-lg">
+        Clear All Bookings (Today)
+      </button>
+      <button onclick="resetAllHalls()" 
+              class="bg-orange-600 hover:bg-orange-500 py-6 rounded-3xl font-medium text-lg">
+        Reset All Halls to Free
+      </button>
+      <button onclick="showAllBookings()" 
+              class="bg-blue-600 hover:bg-blue-500 py-6 rounded-3xl font-medium text-lg">
+        View Current Bookings
+      </button>
+    </div>
+
+    <!-- Recurring Bookings Management -->
+    <div class="bg-gray-900 rounded-3xl p-8 mb-10">
+      <h2 class="text-2xl font-semibold mb-6">Recurring Bookings</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <select id="recurring-hall" class="bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4">
+          <option value="">Select Hall</option>
+          <!-- Populated by JavaScript -->
+        </select>
+        <input type="text" id="recurring-purpose" placeholder="Class/Purpose" class="bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4">
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div>
+          <label class="block text-gray-400 text-sm mb-2">Start Time</label>
+          <input type="time" id="recurring-start" class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4">
+        </div>
+        <div>
+          <label class="block text-gray-400 text-sm mb-2">End Time</label>
+          <input type="time" id="recurring-end" class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4">
+        </div>
+        <div class="col-span-2">
+          <label class="block text-gray-400 text-sm mb-2">Days</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="flex items-center"><input type="checkbox" value="Monday" class="mr-2"> Mon</label>
+            <label class="flex items-center"><input type="checkbox" value="Tuesday" class="mr-2"> Tue</label>
+            <label class="flex items-center"><input type="checkbox" value="Wednesday" class="mr-2"> Wed</label>
+            <label class="flex items-center"><input type="checkbox" value="Thursday" class="mr-2"> Thu</label>
+            <label class="flex items-center"><input type="checkbox" value="Friday" class="mr-2"> Fri</label>
+          </div>
+        </div>
+      </div>
+      <button onclick="addRecurringBooking()" class="bg-green-600 hover:bg-green-500 px-8 py-4 rounded-2xl font-medium">
+        Add Recurring Booking
+      </button>
+      <div id="recurring-list" class="mt-6 space-y-4">
+        <!-- Recurring bookings list -->
+      </div>
+    </div>
+
+    <!-- All Halls Management -->
+    <div class="bg-gray-900 rounded-3xl p-8">
+      <h2 class="text-2xl font-semibold mb-6">Manage Lecture Halls</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="admin-halls-grid">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+  </div>
+  <!-- End of admin-content -->
+
+  <script src="script.js"></script>
+  <script>
+    // Admin Authentication Credentials (CHANGE THESE IN PRODUCTION)
+    const adminCredentials = {
+      username:"admin",
+      password:"admin123"
+    };
+
+    // Function to toggle admin password visibility
+    function toggleAdminPasswordVisibility() {
+      const input = document.getElementById("admin-password");
+      const icon = document.getElementById("admin-eye-icon");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228L3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m-7.894-7.894L3 3m3.228 3.228 6.364 6.364" />`;
+      } else {
+        input.type = "password";
+        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />`;
+      }
+    }
+
+    // Admin Login Function
+    function adminLogin() {
+      const username = document.getElementById("admin-username").value.trim();
+      const password = document.getElementById("admin-password").value;
+      const errorElement = document.getElementById("admin-login-error");
+
+      // Clear previous error
+      errorElement.classList.add("hidden");
+      errorElement.textContent = "";
+
+      // Validate credentials
+      if (username === "" || password === "") {
+        errorElement.textContent = "Please enter both username and password";
+        errorElement.classList.remove("hidden");
+        return;
+      }
+
+      if (username !== adminCredentials.username || password !== adminCredentials.password) {
+        errorElement.textContent = "❌ Invalid credentials! Please try again.";
+        errorElement.classList.remove("hidden");
+        // Clear password field
+        document.getElementById("admin-password").value = "";
+        return;
+      }
+
+      // Authentication successful - save to sessionStorage
+      sessionStorage.setItem("adminAuthenticated", "true");
+      sessionStorage.setItem("adminUsername", username);
+      sessionStorage.setItem("adminLoginTime", new Date().toISOString());
+
+      // Show admin content and hide login
+      document.getElementById("admin-login-modal").classList.add("hidden");
+      document.getElementById("admin-content").classList.remove("hidden");
+      document.getElementById("logged-username").textContent = username;
+
+      // Initialize admin features
+      initAdmin();
+    }
+
+    // Admin Logout Function
+    function adminLogout() {
+      if (confirm("Are you sure you want to logout?")) {
+        // Clear session storage
+        sessionStorage.removeItem("adminAuthenticated");
+        sessionStorage.removeItem("adminUsername");
+        sessionStorage.removeItem("adminLoginTime");
+
+        // Reset form and show login
+        document.getElementById("admin-username").value = "";
+        document.getElementById("admin-password").value = "";
+        document.getElementById("admin-login-modal").classList.remove("hidden");
+        document.getElementById("admin-content").classList.add("hidden");
+      }
+    }
+
+    // Check admin authentication on page load
+    function checkAdminAuth() {
+      initTheme();
+      const isAuthenticated = sessionStorage.getItem("adminAuthenticated") === "true";
+      const username = sessionStorage.getItem("adminUsername");
+
+      if (isAuthenticated && username) {
+        // User is already logged in
+        document.getElementById("admin-login-modal").classList.add("hidden");
+        document.getElementById("admin-content").classList.remove("hidden");
+        document.getElementById("logged-username").textContent = username;
+        initAdmin();
+      } else {
+        // User is not logged in - show login form
+        document.getElementById("admin-login-modal").classList.remove("hidden");
+        document.getElementById("admin-content").classList.add("hidden");
+      }
+    }
+
+    // Allow Enter key to submit login
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("admin-password").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") adminLogin();
+      });
+      document.getElementById("admin-username").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") adminLogin();
+      });
+    });
+
+    // Generate New Admin Password
+    function generateNewPassword() {
+      const newPass = 'UNI' + Math.floor(1000 + Math.random() * 9000);
+      weeklyPassword = newPass.trim();
+      document.getElementById("current-password").value = weeklyPassword;
+      alert("✅ New Weekly Password Generated: " + weeklyPassword + "\n\n📢 Students must use this password to book.");
+      saveToLocalStorage();
+    }
+
+    function setCustomPassword() {
+      const custom = document.getElementById("custom-password").value.trim();
+      if (custom === "") {
+        alert("Password cannot be empty!");
+        return;
+      }
+      weeklyPassword = custom.trim();
+      document.getElementById("current-password").value = weeklyPassword;
+      document.getElementById("custom-password").value = "";  // Clear input
+      alert("Password updated successfully! New password: " + weeklyPassword);
+      saveToLocalStorage();
+    }
+
+    function clearAllBookings() {
+      if (confirm("Clear ALL bookings for today?")) {
+        currentBookings = {};
+        saveToLocalStorage();
+        renderAdminHalls();
+        alert("All bookings cleared!");
+      }
+    }
+
+    function resetAllHalls() {
+      if (confirm("Reset ALL halls to FREE?")) {
+        currentBookings = {};
+        saveToLocalStorage();
+        renderAdminHalls();
+        alert("All halls are now FREE.");
+      }
+    }
+
+    function showAllBookings() {
+      if (Object.keys(currentBookings).length === 0) {
+        alert("No active bookings today.");
+        return;
+      }
+      let message = "Current Bookings:\n\n";
+      for (let hall in currentBookings) {
+        message += `${hall} → Occupied until ${currentBookings[hall].endTime} (${currentBookings[hall].purpose})\n`;
+      }
+      alert(message);
+    }
+
+    function toggleHallStatus(hallName) {
+      if (currentBookings[hallName]) {
+        delete currentBookings[hallName];
+      } else {
+        const endTime = prompt("Enter end time (e.g., 14:30):", "15:00");
+        const purpose = prompt("Enter purpose/class:", "Lecture");
+        if (endTime && purpose) {
+          currentBookings[hallName] = { endTime, purpose };
+        }
+      }
+      saveToLocalStorage();
+      renderAdminHalls();
+    }
+
+    function renderAdminHalls() {
+      const container = document.getElementById("admin-halls-grid");
+      container.innerHTML = "";
+
+      lectureHalls.forEach(hall => {
+        const { isOccupied, statusText } = getHallStatus(hall);
+        const btnColor = isOccupied ? "bg-red-600 hover:bg-red-500" : "bg-green-600 hover:bg-green-500";
+
+        const card = document.createElement("div");
+        card.className = `p-5 rounded-2xl border ${isOccupied ? 'border-red-500 bg-red-950/50' : 'border-green-500 bg-green-950/30'}`;
+        card.innerHTML = `
+          <h3 class="font-semibold mb-3">${hall}</h3>
+          <p class="${isOccupied ? 'text-red-400' : 'text-green-400'} text-sm mb-4">${statusText}</p>
+          <button onclick="toggleHallStatus('${hall}')" 
+                  class="${btnColor} w-full py-3 rounded-xl text-sm font-medium">
+            ${isOccupied ? 'Mark as Free' : 'Mark as Occupied'}
+          </button>
+          ${isOccupied && !currentBookings[hall] ? `<button onclick="cancelRecurringForToday('${hall}')" class="mt-2 w-full bg-yellow-600 hover:bg-yellow-500 py-2 rounded-xl text-sm font-medium">Cancel for Today</button>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function cancelRecurringForToday(hallName) {
+      currentBookings[hallName] = { endTime: "23:59", purpose: "Free" };
+      saveToLocalStorage();
+      renderAdminHalls();
+    }
+
+    function populateHallSelect() {
+      const select = document.getElementById("recurring-hall");
+      lectureHalls.forEach(hall => {
+        const option = document.createElement("option");
+        option.value = hall;
+        option.textContent = hall;
+        select.appendChild(option);
+      });
+    }
+
+    function addRecurringBooking() {
+      const hall = document.getElementById("recurring-hall").value;
+      const purpose = document.getElementById("recurring-purpose").value.trim();
+      const startTime = document.getElementById("recurring-start").value;
+      const endTime = document.getElementById("recurring-end").value;
+      const days = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+
+      if (!hall || !purpose || !startTime || !endTime || days.length === 0) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      const recurring = { hall, purpose, startTime, endTime, days };
+      recurringBookings.push(recurring);
+      saveToLocalStorage();
+      renderRecurringList();
+      // Clear form
+      document.getElementById("recurring-hall").value = "";
+      document.getElementById("recurring-purpose").value = "";
+      document.getElementById("recurring-start").value = "";
+      document.getElementById("recurring-end").value = "";
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    }
+
+    function renderRecurringList() {
+      const container = document.getElementById("recurring-list");
+      container.innerHTML = "";
+      recurringBookings.forEach((rec, index) => {
+        const dayTimeLabels = rec.days.map(day => `${day}: ${formatTime12(rec.startTime)} - ${formatTime12(rec.endTime)}`).join(' · ');
+        const div = document.createElement("div");
+        div.className = "bg-gray-800 p-4 rounded-2xl";
+        div.innerHTML = `
+          <div class="mb-3">
+            <strong class="text-white">${rec.hall}</strong>
+            <p class="text-gray-300 mt-1">${rec.purpose}</p>
+            <p class="text-gray-400 mt-2 text-sm">Time: ${formatTime12(rec.startTime)} - ${formatTime12(rec.endTime)}</p>
+            <p class="text-gray-400 mt-1 text-sm">Schedule: ${dayTimeLabels}</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="removeRecurring(${index})" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-xl text-sm">Remove</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function removeRecurring(index) {
+      recurringBookings.splice(index, 1);
+      saveToLocalStorage();
+      renderRecurringList();
+    }
+
+    // Auto-refresh for admin page
+    let adminAutoRefreshInterval;
+
+    function startAdminAutoRefresh() {
+      // Clear any existing interval first
+      if (adminAutoRefreshInterval) clearInterval(adminAutoRefreshInterval);
+      
+      adminAutoRefreshInterval = setInterval(() => {
+        loadFromLocalStorage();                    // Reload latest data from localStorage
+        renderAdminHalls();      // Re-render halls
+        document.getElementById("current-password").value = weeklyPassword;  // Update password display
+        renderRecurringList();   // Update recurring list
+        console.log("🔄 Admin refreshed at " + new Date().toLocaleTimeString());
+      }, 5000);   // 5000ms = 5 seconds (faster than user page for real-time admin view)
+    }
+
+    // Stop auto-refresh when page is closed
+    window.onbeforeunload = function() {
+      if (adminAutoRefreshInterval) clearInterval(adminAutoRefreshInterval);
+    };
+
+    // Initialize Admin Page (only if authenticated)
+    function initAdmin() {
+      initTheme();
+      loadFromLocalStorage();
+      document.getElementById("current-password").value = weeklyPassword;
+      populateHallSelect();
+      renderRecurringList();
+      renderAdminHalls();
+      startAdminAutoRefresh();  // Start auto-refresh for real-time updates
+    }
+
+    // On page load, check authentication
+    window.onload = function() {
+      checkAdminAuth();
+    };
+  </script>
+</body>
+</html>
