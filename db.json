@@ -1,0 +1,22 @@
+{
+  "currentBookings": {
+    "LIB LT 1": {
+      "endTime": "13:30",
+      "purpose": "Research Meeting"
+    },
+    "PS FF LT 6": {
+      "endTime": "13:00",
+      "purpose": "CSC 301"
+    },
+    "GREAT HALL 2": {
+      "endTime": "16:00",
+      "purpose": "University Seminar"
+    },
+    "AUDITORIUM": {
+      "endTime": "14:30",
+      "purpose": "Guest Lecture"
+    }
+  },
+  "recurringBookings": [],
+  "weeklyPassword": "UNI2026"
+}

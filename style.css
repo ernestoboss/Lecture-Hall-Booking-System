@@ -1,0 +1,152 @@
+/* stylelint-disable at-rule-no-unknown */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.hall-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hall-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 
+              0 8px 10px -6px rgb(0 0 0 / 0.3);
+}
+
+.status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+}
+
+.green-dot { background-color: #22c55e; }
+.red-dot { background-color: #ef4444; }
+.yellow-dot { background-color: #eab308; }
+
+.occupied {
+  border-color: #ef4444;
+  background-color: #7f1d1d;
+}
+
+.reserved {
+  border-color: #f59e0b;
+  background-color: #78350f;
+}
+
+.free {
+  border-color: #22c55e;
+  background-color: #14532d;
+}
+
+
+body.light {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+body.light .bg-gray-950 {
+  background-color: #f8fafc !important;
+}
+
+body.light .bg-gray-900 {
+  background-color: #eff6ff !important;
+}
+
+body.light .bg-gray-800 {
+  background-color: #e2e8f0 !important;
+}
+
+body.light .bg-gray-700 {
+  background-color: #cbd5e1 !important;
+}
+
+body.light .border-gray-800,
+body.light .border-gray-700 {
+  border-color: #cbd5e1 !important;
+}
+
+body.light .text-white,
+body.light .text-gray-100 {
+  color: #0f172a !important;
+}
+
+body.light .text-gray-400 {
+  color: #475569 !important;
+}
+
+body.light .text-gray-300 {
+  color: #334155 !important;
+}
+
+body.light .text-gray-500 {
+  color: #475569 !important;
+}
+
+body.light .text-gray-200 {
+  color: #1e293b !important;
+}
+
+body.light .bg-black\/90 {
+  background-color: rgba(248,250,252,0.92) !important;
+}
+
+body.light .bg-black\/95 {
+  background-color: rgba(248,250,252,0.95) !important;
+}
+
+body.light .bg-slate-700,
+body.light .admin-link,
+body.light .theme-button {
+  background-color: #1e40af !important;
+  color: #ffffff !important;
+}
+
+body.light .admin-link:hover,
+body.light .theme-button:hover {
+  background-color: #1d4ed8 !important;
+}
+
+body.light .bg-blue-600 {
+  background-color: #1e40af !important;
+}
+
+.tab-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background-color: rgba(15, 23, 42, 0.65);
+  color: #e2e8f0;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background-color: rgba(148, 163, 184, 0.16);
+}
+
+.tab-button.active {
+  background-color: #0ea5e9;
+  border-color: rgba(14, 165, 233, 0.9);
+  color: #ffffff;
+}
+
+.tab-panel {
+  min-height: 20rem;
+}
+
+
+
+body.light .hover\:bg-blue-500:hover {
+  background-color: #2563eb !important;
+}
+
+body.light .bg-red-600 {
+  background-color: #ef4444 !important;
+}

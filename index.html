@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecture Hall Booking System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+  <div class="max-w-7xl mx-auto p-6 pb-44">
+    <!-- Updated Header with Date Picker -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 bg-gray-900 p-6 rounded-3xl">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">Lecture Hall Booking System</h1>
+        <p class="text-gray-400 mt-1" id="current-date"></p>
+        <p class="text-gray-400 mt-1" id="current-time"></p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center w-full sm:w-auto">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="theme-button inline-flex items-center px-4 py-3 bg-slate-700 text-sm font-semibold rounded-2xl shadow-lg shadow-black/40 hover:bg-slate-600 transition">
+          <span id="theme-toggle-icon" class="mr-2">🌙</span>
+          <span id="theme-toggle-text">Light Mode</span>
+        </button>
+        <a href="admin.html" class="inline-flex items-center px-4 py-3 bg-blue-600 hover:bg-blue-500 text-sm font-semibold rounded-2xl shadow-lg shadow-black/40 transition">Admin</a>
+      </div>
+    </header>
+
+    <!-- Halls Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" id="halls-grid">
+      <!-- Halls populated by JavaScript -->
+    </div>
+  </div>
+
+
+  <!-- Hall Details Modal -->
+  <div id="details-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+    <div class="bg-gray-900 rounded-3xl p-8 w-full max-w-lg mx-4">
+      <h2 class="text-2xl font-semibold mb-6" id="details-hall-name">Hall Details</h2>
+
+      <div class="space-y-4 mb-8" id="details-content">
+        <!-- Details populated by JavaScript -->
+      </div>
+     
+      <div class="flex gap-4">
+        <button onclick="closeDetailsModal()" 
+                class="flex-1 py-4 bg-gray-700 hover:bg-gray-600 rounded-2xl font-medium text-lg transition">
+          Close
+        </button>
+        <button onclick="proceedToBook()" 
+                class="flex-1 py-4 bg-green-600 hover:bg-green-500 rounded-2xl font-medium text-lg transition">
+          Book This Hall
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div id="booking-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+    <div class="bg-gray-900 rounded-3xl p-8 w-full max-w-lg mx-4">
+      <h2 class="text-2xl font-semibold mb-6" id="modal-hall-name">Book Hall</h2>
+
+      <div class="space-y-6">
+        <div>
+          <label class="block text-gray-400 text-sm mb-2">Weekly Booking Password</label>
+          <div class="relative">
+            <input type="password" id="password-input" 
+                   class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 pr-12 text-lg focus:outline-none focus:border-green-500"
+                   placeholder="Enter password">
+            <button type="button" onclick="togglePasswordVisibility()" 
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200">
+              <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-400 text-sm mb-2">Class / Purpose</label>
+          <input type="text" id="purpose-input" 
+                 class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none"
+                 placeholder="e.g., CSC 301 - Data Structures">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-gray-400 text-sm mb-2">Start Time</label>
+            <input type="time" id="start-time" value="09:00"
+                   class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4">
+          </div>
+          <div>
+            <label class="block text-gray-400 text-sm mb-2">End Time</label>
+            <input type="time" id="end-time" value="11:00"
+                   class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4">
+          </div>
+        </div>
+      </div>
+     
+      <div class="flex gap-4 mt-10">
+        <button onclick="closeModal()" 
+                class="flex-1 py-4 bg-gray-700 hover:bg-gray-600 rounded-2xl font-medium text-lg transition">
+          Cancel
+        </button>
+        <button onclick="confirmBooking()" 
+                class="flex-1 py-4 bg-green-600 hover:bg-green-500 rounded-2xl font-medium text-lg transition">
+          Confirm Booking
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
